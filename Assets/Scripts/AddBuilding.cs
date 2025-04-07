@@ -15,6 +15,8 @@ public class AddBuilding : MonoBehaviour
 
     public GameObject highlighter;
 
+    public GameObject cameraAxis;
+
 
     // stores all the places that a building can be spawned at
     private Dictionary<int, Vector3> possibleTilePositions = new Dictionary<int, Vector3>
@@ -317,7 +319,7 @@ public class AddBuilding : MonoBehaviour
     {
         sp.Open();
         // might be too fast but it seemed to work fine for me? causes some timeout errors going this fast but slower made it really laggy waiting for the next update (should be on a different thread ig?)
-        sp.ReadTimeout = 50;
+        sp.ReadTimeout = 10;
     }
 
 
@@ -674,7 +676,7 @@ public class AddBuilding : MonoBehaviour
                         selectedFraction = 6;
                     }
 
-                    highlighterPosition = new Vector3(selectedHexagonActualNumber, -4f, selectedRowActualNumber);
+                    highlighterPosition = new Vector3(selectedHexagonActualNumber, -11.4f, selectedRowActualNumber);
                     highlighter.transform.position = highlighterPosition;
                 }
 
@@ -769,6 +771,8 @@ public class AddBuilding : MonoBehaviour
                 Debug.LogError($"An error occurred: {ex.Message}");
             }
         }
+        cameraAxis.transform.Rotate(Vector3.up * Time.deltaTime * 5f); // Adjust speed as needed
+
     }
 
     private IEnumerator MoveToTarget(Transform objectTransform, Vector3 targetPosition)
@@ -810,12 +814,13 @@ public class AddBuilding : MonoBehaviour
         onComplete?.Invoke();
     }
 
-        private IEnumerator ButtonCooldown()
+    private IEnumerator ButtonCooldown()
     {
         isButtonOnCooldown = true; // Activate cooldown
         yield return new WaitForSeconds(1.0f); // Cooldown duration (1 second)
         isButtonOnCooldown = false; // Deactivate cooldown
     }
+
 
 
 

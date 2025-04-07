@@ -1051,7 +1051,7 @@ MonoBehaviour:
     m_Value: 65535
   reflectionLightingMultiplier:
     m_OverrideState: 1
-    m_Value: 1.73
+    m_Value: 2.16
   reflectionLightingLayers:
     m_OverrideState: 1
     m_Value: 65535
@@ -1431,7 +1431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaa3b8214f75b354e9ba2caadd022259, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   quality:
     m_OverrideState: 1
     m_Value: 3
@@ -1446,16 +1446,16 @@ MonoBehaviour:
     m_Value: 1
   nearFocusStart:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 55.2
   nearFocusEnd:
     m_OverrideState: 1
-    m_Value: 28.47
+    m_Value: 70.3
   farFocusStart:
     m_OverrideState: 1
-    m_Value: 45.8
+    m_Value: 105.9
   farFocusEnd:
     m_OverrideState: 1
-    m_Value: 227.8
+    m_Value: 308.4
   m_NearSampleCount:
     m_OverrideState: 1
     m_Value: 5
@@ -1467,7 +1467,7 @@ MonoBehaviour:
     m_Value: 7
   m_FarMaxBlur:
     m_OverrideState: 1
-    m_Value: 6.86
+    m_Value: 5.35
   m_Resolution:
     m_OverrideState: 1
     m_Value: 2
