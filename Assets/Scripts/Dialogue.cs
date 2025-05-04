@@ -3,14 +3,20 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using extOSC;
 
 public class Dialogue : MonoBehaviour
 {
+
+    [Header("OSC Settings")]
+    public string Address = "/OurCity";
+    public OSCReceiver Receiver;
 
     // the text objects for the bubble and the name
     public TMP_Text bubbleText;
     public TMP_Text nameText;
 
+    private AddBuilding addBuilding;
     // public GameObject bubbleBack;
     // public float bubbleHeight;
 
@@ -43,6 +49,7 @@ public class Dialogue : MonoBehaviour
     public Sprite kellySprite;
     public Sprite reeceSprite;
     public Sprite olyaSprite;
+    public Sprite miguelMicaelaSprite;
     public Sprite zeekSprite;
     public Sprite eddieSprite;
 
@@ -85,15 +92,49 @@ public class Dialogue : MonoBehaviour
 
         characterImageObject.GetComponent<Image>().sprite = characterImages[indexOfCurrentPrompt];
 
+        StartCoroutine(PopupCharacter());
+
         // set the character image to the character's image
         // characterImage.sprite = Resources.Load<Sprite>(characterImage);
+    }
+
+    string messageFromOSC = "";
+
+
+    private void ReceivedMessage(OSCMessage message)
+    {
+        Debug.Log($"Received OSC message: {message}");
+        messageFromOSC = message.ToString();
+
+        if (message.ToString().Contains("NEXTPROMPT"))
+        {
+            bubbleText.text = "Great choice! Thank you!";
+        
+            
+            UpThePromptIndex();
+        }
     }
 
 
     public void UpThePromptIndex()
     {
+        // wait three seconds
+        StartCoroutine(WaitThreeSecondsAndHandle());
+        
+    }
+
+    private IEnumerator WaitThreeSecondsAndHandle()
+    {
+        // Wait for 3 seconds
+        yield return new WaitForSeconds(3f);
+        // Dismiss the character
         StartCoroutine(HandlePromptIndex());
     }
+
+
+    // using osc button
+
+
 
     private IEnumerator HandlePromptIndex()
     {
@@ -116,34 +157,48 @@ public class Dialogue : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        characterPosition = new Vector2(300, -460);
+        // addBuilding = FindObjectOfType<AddBuilding>();
+
+        if (Receiver == null)
+        {
+            Debug.LogError("OSC Receiver is not assigned!");
+            return;
+        }
+
+        Receiver.Bind(Address, ReceivedMessage);
+
+
+        characterPosition = new Vector2(330, -460);
 
 
         dialogueLines = new Dictionary<int, string>
         {
             { 0, "The Repair Crew needs to fuel up! Determine where power stations go" },
-            { 1, "I need to get to work, but there's no hyperrail! Please rebuild the hyperrail" },
-            { 2, "My robodog ran away from home. It loves to hang around trees! Place a park so we can see where it ran off to" },
-            { 3, "I lost a leg while hoverboarding away from Godzilla. Can you help rebuild the clinics so I can get it fixed? I hope to not walk too far from the hyperrail" },
-            { 4, "Godzilla stomped on all the senior housing units. Let's fix them so we have somewhere to live! We really like to be near the library and hospital and repair shops)" }
+            { 1, "I need to get to work, but there's no hyperrail! Please rebuild the hyperrail station" },
+            { 2, "Mg: The ice cream shop is better near the cafe!<br> Mc: NOOooOO I hink it's better near the hyperrail!<br> Mg: Hey you! Where do YOU think the ice cream shop should go?" },
+            { 3, "I lost a leg while hoverboarding away from Godzilla. Can you help rebuild the hospital so I can get it fixed? I hope to not walk too far from the hyperrail" },
+            { 4, "Godzilla stomped on all the senior housing units. Let's fix them so we have somewhere to live! We really like to be near the library and hospital and repair shops" },
+            { 5, "It's hard for me to find places to study history! I need a library! I'm always there late, and I'm *totally* not scared of the dark, so being near other buildings is a bonus!" }
         };
 
         characterNames = new Dictionary<int, string>
         {
             { 0, "Kelly" },
             { 1, "Reece" },
-            { 2, "Olya" },
+            { 2, "Twins Miguel & Micaela" },
             { 3, "Zeek" },
-            { 4, "Eddie" }
+            { 4, "Eddie" },
+             { 5, "Olya" }
         };
 
         characterImages = new Dictionary<int, Sprite>
         {
             { 0, kellySprite },
             { 1, reeceSprite },
-            { 2, olyaSprite},
+            { 2, miguelMicaelaSprite},
             { 3, zeekSprite},
-            { 4, eddieSprite }
+            { 4, eddieSprite },
+             { 5, olyaSprite }
         };
 
         characterScores = new Dictionary<int, float>
@@ -155,22 +210,26 @@ public class Dialogue : MonoBehaviour
             { 4, 0.5f }
         };
 
-        StartDialogue();
-        StartCoroutine(PopupCharacter());
+
     }
 
     // Update is called once per frame
     void Update()
     {
 
+        // if (addBuilding == null || !addBuilding.isTutorialStarted)
+        // {
+        //     return;
+        // }
         characterPopupAndChildren.transform.position = characterPosition;
+
 
     }
 
     // move character up and set position of characterPopupAndChildren to characterPosition
     public IEnumerator PopupCharacter()
     {
-        Vector2 targetPosition = new Vector2(characterPosition.x, 330);
+        Vector2 targetPosition = new Vector2(characterPosition.x, 266);
         float speed = 1600f; // Adjust the speed as needed
 
         while (characterPosition != targetPosition)
@@ -196,6 +255,15 @@ public class Dialogue : MonoBehaviour
         }
         characterPosition = targetPosition;
     }
+
+    // private void ReceivedMessage(OSCMessage message)
+    // {
+    //     Debug.Log($"Received OSC message: {message}");
+    //     if (message.ToString().Contains("ENDTUTORIAL"))
+    //     {
+    //         StartDialogue();
+    //     }
+    // }
 
 
 }
